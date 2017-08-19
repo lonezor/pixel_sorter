@@ -91,10 +91,10 @@ class Pixel
         void swap(Pixel& other)
         {
             if (!this->data || !other.data) 
-                {
-                    printf("no data\n");
-                    return;
-                }
+            {
+                printf("no data\n");
+                return;
+            }
 
             uint8_t temp[this->size];
             int x = this->x;
@@ -150,7 +150,7 @@ class Pixel
     private:
         int   x;
         int   y;
-        int maxX;
+        int   maxX;
         void* data;
         int   size;
 };
