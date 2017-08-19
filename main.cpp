@@ -112,7 +112,6 @@ int main(int argc, char* argv[])
 
     //----------------- User has closed window, exit program --------------------------
     printf("Exiting\n");
-    exitProgram = 1;
     thread->join();
 
     delete imageWindow;

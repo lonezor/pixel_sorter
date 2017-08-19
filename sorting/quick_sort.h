@@ -40,13 +40,13 @@ class QuickSort
         int pivotIndex = rand() % nrElements;
         uint8_t data[element[0].getSize()];
         T pivot = element[pivotIndex].copy(data, element[pivotIndex].getData());
-   
+
         while (lSelector < rSelector)
         {
             while (element[lSelector] < pivot) lSelector++;
             while (element[rSelector] > pivot) rSelector--;
             element[lSelector].swap(element[rSelector]);
-            //usleep(1); // Visualization: Align with speed of other algorithms
+            usleep(1); // Visualization: Align with speed of other algorithms
         }
        quicksort(&element[0], lSelector);
        quicksort(&element[lSelector + 1], nrElements - 1 - lSelector); 

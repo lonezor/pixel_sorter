@@ -35,14 +35,13 @@ GtkImageWindow::GtkImageWindow(Image* image)
     assert(this->screenRefreshCtx);
 
     this->screenRefreshCtx->image = image;
-    this->screenRefreshCtx->timer = 0;
+    this->screenRefreshCtx->stopTimer = FALSE;
 }
 
 //-----------------------------------------------------------------------------------------------------------
 
 GtkImageWindow::~GtkImageWindow()
 {
-    g_source_remove(this->screenRefreshCtx->timer);
     free(this->screenRefreshCtx);
 }
 
@@ -85,17 +84,21 @@ void GtkImageWindow::activate (GtkApplication* app, gpointer user_data) // stati
     gtk_widget_show_all (window);
 
     ctx->gtkImage = gtkImage;
-    ctx->timer    = g_timeout_add (1000 / 60, refresh_image_widget, ctx);
+    g_timeout_add (1, refresh_image_widget, ctx);
+    g_signal_connect (window, "delete-event", G_CALLBACK (delete_event), ctx);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 
 gboolean GtkImageWindow::refresh_image_widget(gpointer user_data)
 {
-    if (exitProgram) return FALSE;
-
     screen_refresh_ctx_t* ctx = ( screen_refresh_ctx_t*)user_data;
     assert(ctx);
+
+    if (ctx->stopTimer)
+    {
+        return FALSE;
+    }
 
     // After updating pixbuf, it is not enough to queue draw event for the image. The pixmap needs to be replaced.
     GdkPixbuf* buf = ctx->image->newGdkPixBuf();
@@ -105,6 +108,19 @@ gboolean GtkImageWindow::refresh_image_widget(gpointer user_data)
     g_object_unref(buf);
 
     return TRUE;
+}
+
+//-----------------------------------------------------------------------------------------------------------
+
+gboolean GtkImageWindow::delete_event(GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+    screen_refresh_ctx_t* ctx = (screen_refresh_ctx_t*)data;
+    assert(ctx);
+
+    ctx->stopTimer = TRUE;
+    exitProgram    = TRUE;
+
+    return FALSE;
 }
 
 //-----------------------------------------------------------------------------------------------------------
