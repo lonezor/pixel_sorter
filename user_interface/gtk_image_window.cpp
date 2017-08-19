@@ -84,13 +84,13 @@ void GtkImageWindow::activate (GtkApplication* app, gpointer user_data) // stati
     gtk_widget_show_all (window);
 
     ctx->gtkImage = gtkImage;
-    g_timeout_add (1, refresh_image_widget, ctx);
-    g_signal_connect (window, "delete-event", G_CALLBACK (delete_event), ctx);
+    g_timeout_add (1, refresh_image, ctx);
+    g_signal_connect (window, "delete-event", G_CALLBACK (window_delete), ctx);
 }
 
 //-----------------------------------------------------------------------------------------------------------
 
-gboolean GtkImageWindow::refresh_image_widget(gpointer user_data)
+gboolean GtkImageWindow::refresh_image(gpointer user_data)
 {
     screen_refresh_ctx_t* ctx = ( screen_refresh_ctx_t*)user_data;
     assert(ctx);
@@ -112,7 +112,7 @@ gboolean GtkImageWindow::refresh_image_widget(gpointer user_data)
 
 //-----------------------------------------------------------------------------------------------------------
 
-gboolean GtkImageWindow::delete_event(GtkWidget* widget, GdkEvent* event, gpointer data)
+gboolean GtkImageWindow::window_delete(GtkWidget* widget, GdkEvent* event, gpointer data)
 {
     screen_refresh_ctx_t* ctx = (screen_refresh_ctx_t*)data;
     assert(ctx);

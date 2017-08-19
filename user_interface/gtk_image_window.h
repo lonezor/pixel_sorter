@@ -42,10 +42,9 @@ public:
 
 private:
     // Callback functions
-    static void     activate (GtkApplication* app, gpointer user_data);
-    static gboolean refresh_image_widget(gpointer user_data);
-    static gboolean window_delete(gpointer user_data);
-    static gboolean delete_event( GtkWidget *widget,GdkEvent* event, gpointer data );
+    static void     activate(GtkApplication* app, gpointer user_data);
+    static gboolean refresh_image(gpointer user_data);
+    static gboolean window_delete(GtkWidget *widget, GdkEvent* event, gpointer data);
     
     screen_refresh_ctx_t* screenRefreshCtx;
 };
