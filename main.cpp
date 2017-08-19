@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     }
 
     //----------------- Configurable settings --------------------------
-    printf("Welcome to pixel sorter!\n");
+    printf("Welcome to Pixel sorter!\n");
     printf("\n");
     printf("Image file: %s\n", path);
     printf("\n");
