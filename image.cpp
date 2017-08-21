@@ -43,15 +43,15 @@ bool Image::loadFromFile(char* path)
     this->pixbuf        = gdk_pixbuf_new_from_file(path, &err);
     if (!this->pixbuf) return FALSE;
 
-    this->width         = gdk_pixbuf_get_width (this->pixbuf);
-    this->height        = gdk_pixbuf_get_height (this->pixbuf);
-    this->nrChannels    = gdk_pixbuf_get_n_channels (this->pixbuf);
-    this->colorSpace    = gdk_pixbuf_get_colorspace (this->pixbuf);
-    this->bitsPerSample = gdk_pixbuf_get_bits_per_sample (this->pixbuf);
+    this->width         = gdk_pixbuf_get_width(this->pixbuf);
+    this->height        = gdk_pixbuf_get_height(this->pixbuf);
+    this->nrChannels    = gdk_pixbuf_get_n_channels(this->pixbuf);
+    this->colorSpace    = gdk_pixbuf_get_colorspace(this->pixbuf);
+    this->bitsPerSample = gdk_pixbuf_get_bits_per_sample(this->pixbuf);
 
-    success &= (this->colorSpace == GDK_COLORSPACE_RGB);
+    success &= (this->colorSpace    == GDK_COLORSPACE_RGB);
     success &= (this->bitsPerSample == 8);
-    success &= (this->nrChannels == 3);
+    success &= (this->nrChannels    == 3);
 
     // used as buffer for raw pixel access, ensure it is allocated even though GTK does not reference it.
     g_object_ref(this->pixbuf); 
@@ -65,11 +65,11 @@ void Image::rescale(int width, int height)
 {
     GdkPixbuf* pxBuf;
 
-    pxBuf = gdk_pixbuf_scale_simple (this->pixbuf, width, height, GDK_INTERP_HYPER);
+    pxBuf = gdk_pixbuf_scale_simple(this->pixbuf, width, height, GDK_INTERP_HYPER);
 
     this->pixbuf = pxBuf;
-    this->width  = gdk_pixbuf_get_width (this->pixbuf);
-    this->height = gdk_pixbuf_get_height (this->pixbuf);
+    this->width  = gdk_pixbuf_get_width(this->pixbuf);
+    this->height = gdk_pixbuf_get_height(this->pixbuf);
 }
 
 //-----------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void* Image::getPixelAddress(int x, int y)
     g_assert(y >= 0 && y < this->height);
 
     rowstride = gdk_pixbuf_get_rowstride(this->pixbuf);
-    pixels = gdk_pixbuf_get_pixels(this->pixbuf);
+    pixels    = gdk_pixbuf_get_pixels(this->pixbuf);
     
     p = pixels + y * rowstride + x * this->nrChannels; 
 
