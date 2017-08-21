@@ -67,6 +67,7 @@ void Image::rescale(int width, int height)
 
     pxBuf = gdk_pixbuf_scale_simple(this->pixbuf, width, height, GDK_INTERP_HYPER);
 
+    g_clear_object(&this->pixbuf);
     this->pixbuf = pxBuf;
     this->width  = gdk_pixbuf_get_width(this->pixbuf);
     this->height = gdk_pixbuf_get_height(this->pixbuf);
