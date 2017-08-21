@@ -158,7 +158,7 @@ void Image::saveAsPng(char* path)
                     "compression", "6",
                     NULL);
 
-    if (err != NULL) printf("gdk_pixbuf_save failed: %s\n", __FUNCTION__,  err->message);
+    if (err != NULL) printf("gdk_pixbuf_save failed: %s\n", __FUNCTION__);
 }
 
 //-----------------------------------------------------------------------------------------------------------

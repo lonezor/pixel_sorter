@@ -54,7 +54,7 @@ void GtkImageWindow::show()
 
     g_signal_connect (app, "activate", G_CALLBACK (activate), (gpointer)this->screenRefreshCtx); // TODO: send data from show() to both activate and refresh so we can free it later
     char* argv[] = {(char*)"no_arguments"};
-    int status = g_application_run (G_APPLICATION (app), 1, argv);
+    g_application_run (G_APPLICATION (app), 1, argv);
     g_object_unref (app);
 }
 

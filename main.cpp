@@ -34,6 +34,16 @@
 #include "gtk_image_window.h"
 #include "thread.h"
 
+static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
+{
+  "Bubble Sort",
+  "Insertion Sort",
+  "Quicksort",
+  "Selection Sort",
+  "Shaker Sort",
+  "Shell Sort",
+};
+
 static void* sort_thread_main(void* data);
 
 int main(int argc, char* argv[])
@@ -65,7 +75,7 @@ int main(int argc, char* argv[])
     printf("Available algorithms:\n");
 
     int i;
-    algorithm_t algorithm = ALGORITHM_DEFAULT;
+    int algorithm = (int)ALGORITHM_DEFAULT;
     for(i=0; i<ALGORITHM_NR_ENTRIES; i++)
     {
         printf("%d. %s\n",i, algorithmName[i]);
@@ -97,7 +107,7 @@ int main(int argc, char* argv[])
     //----------------- Scramble pixels and start sorting in separate thread --------------------------
     PixelSorter* pixelSorter = new PixelSorter(image);
     assert(pixelSorter);
-    pixelSorter->setAlgorithm(algorithm);
+    pixelSorter->setAlgorithm((algorithm_t)algorithm);
 
     printf("Scambling pixels\n");
     pixelSorter->randomize();

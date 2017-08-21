@@ -53,16 +53,6 @@ typedef enum name
   SORT_TYPE_TEXT,
 } sort_type_t;
 
-static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
-{
-  "Bubble Sort",
-  "Insertion Sort",
-  "Quicksort",
-  "Selection Sort",
-  "Shaker Sort",
-  "Shell Sort",
-};
-
 //-----------------------------------------------------------------------------------------------------------
 
 // Convenient access to all template expanded sorting implementations
