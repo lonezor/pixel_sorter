@@ -49,7 +49,7 @@ GtkImageWindow::~GtkImageWindow()
 
 void GtkImageWindow::show()
 {
-    GtkApplication* app = gtk_application_new (NULL, G_APPLICATION_FLAGS_NONE);
+    GtkApplication* app = gtk_application_new ("com.github.lonezor.pixel_sorter", G_APPLICATION_FLAGS_NONE);
     assert(app);
 
     g_signal_connect (app, "activate", G_CALLBACK (activate), (gpointer)this->screenRefreshCtx); // TODO: send data from show() to both activate and refresh so we can free it later
