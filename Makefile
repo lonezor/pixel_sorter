@@ -9,3 +9,5 @@ all:
 run: all
 	$(CMD_LINE)
 
+ut:
+	$(CXX) $(CFLAGS) -DUNIT_TEST $(LIBS) *.cpp sorting/*.cpp user_interface/*.cpp -o unit_test

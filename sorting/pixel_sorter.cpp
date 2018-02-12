@@ -80,6 +80,7 @@ void PixelSorter::sort()
 {
     switch (algorithm)
     {
+        // In-place comparative algorithms
         case ALGORITHM_BUBBLE_SORT:
             AlgorithmCollection::pixel_BubbleSort.sort(this->pixels, this->nrPixels);
             break;
@@ -97,6 +98,11 @@ void PixelSorter::sort()
             break;
         case ALGORITHM_SHELL_SORT:
             AlgorithmCollection::pixel_ShellSort.sort(this->pixels, this->nrPixels);
+            break;
+
+        // Out-of-place non-comparative sorting algorithms
+        case ALGORITHM_RADIX_SORT:
+            AlgorithmCollection::pixel_RadixSort.sort(this->pixels, this->nrPixels, this->width * this->height - 1);
             break;
         default:
             break;

@@ -59,6 +59,11 @@ class Integer
         return this->size;
     }
 
+    int getPos(void)
+    {
+        return *((int*)this->data); // the integer value itself
+    }
+
     Integer copy(void* dst, void* src)
     {
         memcpy(dst, src, this->size);

@@ -34,6 +34,10 @@
 #include "gtk_image_window.h"
 #include "thread.h"
 
+#ifdef UNIT_TEST
+#include "unit_test.h"
+#endif
+
 static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
 {
   "Bubble Sort",
@@ -42,12 +46,18 @@ static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
   "Selection Sort",
   "Shaker Sort",
   "Shell Sort",
+  "Radix Sort",
 };
 
 static void* sort_thread_main(void* data);
 
 int main(int argc, char* argv[])
 {
+
+#ifdef UNIT_TEST
+    return RunUnitTests();
+#endif
+
     //----------------- Command argument handling --------------------------
     if (argc == 1)
     {
@@ -96,7 +106,7 @@ int main(int argc, char* argv[])
     printf("\n");
 
     //----------------- Resizing image to manageable size --------------------------
-    #define WIDTH 640
+    #define WIDTH 1280
     float width = (float)image->getWidth();
     float height = (float)image->getHeight();
     float aspectRatio = width / height;

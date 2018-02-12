@@ -20,6 +20,8 @@
 #define _PIXEL_H_
 
 #include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 
 extern void pixelSwapCb(void);
 
@@ -88,6 +90,11 @@ class Pixel
             *y = this->y;
         }
 
+        int getPos()
+        {
+            return this->x + (this->y * this->maxX);
+        }
+
         void swap(Pixel& other)
         {
             if (!this->data || !other.data) 
@@ -125,14 +132,14 @@ class Pixel
 
         bool operator< (const Pixel& rhs)
         {
-            int pos = this->x + (this->y * this->maxX);
+            int pos = getPos();
             int otherPos = rhs.x + (rhs.y * rhs.maxX);
             return (pos < otherPos);
         }
 
         bool operator> (const Pixel& rhs)
         {
-            int pos = this->x + (this->y * this->maxX);
+            int pos = getPos();
             int otherPos = rhs.x + (rhs.y * rhs.maxX);
             return (pos > otherPos);
         }
