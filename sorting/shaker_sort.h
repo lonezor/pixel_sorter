@@ -34,7 +34,7 @@ class ShakerSort
         do
         {
             swap = 0;
-            for(i=0; i<nrElements-1; i++)
+            for(i=0; i < nrElements - 1; i++)
             {
                 if (element[i] > element[i+1])
                 {
@@ -46,7 +46,7 @@ class ShakerSort
             if (!swap) break;
 
             swap = 0;
-            for(i=nrElements-2; i > 0; i--)
+            for(i=nrElements-2; i >= 0; i--)
             {
                 if (element[i] > element[i+1])
                 {

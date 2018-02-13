@@ -257,7 +257,7 @@ int RunUnitTests()
     res &= UT_Integer_InsertionSort();
     res &= UT_Integer_QuickSort();
     res &= UT_Integer_SelectionSort();
-    res &= UT_Integer_ShakerSort(); // TODO: fix! (case with very few entries in list)
+    res &= UT_Integer_ShakerSort();
     res &= UT_Integer_ShellSort();
     res &= UT_Integer_RadixSort();
 
