@@ -19,6 +19,9 @@
 #include "pixel_sorter.h"
 #include <stdio.h>
 #include <assert.h>
+#include <chrono>
+
+using std::chrono::steady_clock;
 
 //-----------------------------------------------------------------------------------------------------------
 
@@ -78,6 +81,8 @@ void PixelSorter::randomize(void)
 
 void PixelSorter::sort()
 {
+    auto start = steady_clock::now();
+
     switch (algorithm)
     {
         // In-place comparative algorithms
@@ -102,10 +107,29 @@ void PixelSorter::sort()
 
         // Out-of-place non-comparative sorting algorithms
         case ALGORITHM_RADIX_SORT:
-            AlgorithmCollection::pixel_RadixSort.sort(this->pixels, this->nrPixels, this->width * this->height - 1);
+            AlgorithmCollection::pixel_RadixSort.sort(this->pixels, this->nrPixels);
             break;
         default:
             break;
+    }
+
+    auto end = steady_clock::now();
+    double elapsedTime = ((end-start).count()) * steady_clock::period::num / static_cast<double>(steady_clock::period::den);
+    if (elapsedTime < 1)
+    {
+        printf("Sorting time: %d ms\n", (int)(elapsedTime*1000));
+    }
+    else
+    {
+        long elapsedTimeMs, hours, minutes, seconds, ms;
+        elapsedTimeMs  = (long)(elapsedTime * 1000);
+        hours          = elapsedTimeMs / (3600 * 1000);
+        elapsedTimeMs -= hours * 3600 * 1000;
+        minutes        = elapsedTimeMs / (60*1000);
+        elapsedTimeMs -= minutes * 60 * 1000;
+        seconds        = elapsedTimeMs  / 1000;
+        ms             = elapsedTimeMs % 1000;
+        printf("Sorting time: %02ld:%02ld:%02ld:%03ld\n", hours, minutes, seconds, ms);
     }
 }
 

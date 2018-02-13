@@ -32,6 +32,7 @@ static const int intArray_05[] = {5,4,3,2,1};
 static const int intArray_06[] = {5,2,4,10,3,1,7,9,6,8};
 static const int intArray_07[] = {5,11,19,2,4,14,15,10,3,20,1,7,9,12,16,6,8,17,13,18};
 static const int intArray_08[] = {53,11,190,2,4,134,154,10,3,2000,1,7,990,12,176,688,8,17,13,0,128};
+static const int intArray_09[] = {-5000,4,0,200000,-56, 101,-99999,5000000, 34,6,-5020,3};
 
 //#define VERBOSE (1)
 
@@ -50,7 +51,8 @@ static int UT_integer_test(algorithm_t algorithm, int* pass, int* total)
                            intArray_05,
                            intArray_06,
                            intArray_07,
-                           intArray_08};
+                           intArray_08,
+                           intArray_09};
 
     const int  sizes[] = { sizeof(intArray_01),
                            sizeof(intArray_02),
@@ -59,7 +61,8 @@ static int UT_integer_test(algorithm_t algorithm, int* pass, int* total)
                            sizeof(intArray_05),
                            sizeof(intArray_06),
                            sizeof(intArray_07),
-                           sizeof(intArray_08)};
+                           sizeof(intArray_08),
+                           sizeof(intArray_09)};
 
     int nrTests = sizeof(input) / sizeof(int*);
 
@@ -140,7 +143,7 @@ static int UT_integer_test(algorithm_t algorithm, int* pass, int* total)
                 #ifdef VERBOSE
                 printf("Algorithm: Radix Sort\n");
                 #endif
-                AlgorithmCollection::integer_RadixSort.sort(integers, nrEntries, 1000000);
+                AlgorithmCollection::integer_RadixSort.sort(integers, nrEntries);
                 break;
             default:
                 break;
