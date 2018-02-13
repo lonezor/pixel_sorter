@@ -65,14 +65,21 @@ void PixelSorter::setAlgorithm(algorithm_t algorithm)
 
 //-----------------------------------------------------------------------------------------------------------
 
-void PixelSorter::randomize(void)
+void PixelSorter::randomize(int scatter)
 {
     int i,j;
 
     // Randomize image so that sorting can be performed
-    for(i=0; i < this->nrPixels; i++)
+    for(i=1; i < this->nrPixels; i++)
     {
-        j = rand() % this->nrPixels;
+        if (scatter && i > scatter)
+        {
+            j = i - scatter + (rand() % scatter);
+        }
+        else
+        {
+            j = rand() % this->nrPixels;
+        }   
         this->pixels[i].swap(this->pixels[j]);
     }
 }

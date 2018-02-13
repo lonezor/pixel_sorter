@@ -34,7 +34,7 @@ public:
     ~PixelSorter();
    
     void setAlgorithm(algorithm_t algorithm);
-    void randomize(void);
+    void randomize(int scatter);
     void sort(void);
 
     Image* getImage(void);

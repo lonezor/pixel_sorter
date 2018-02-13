@@ -27,7 +27,7 @@ class Sorter
 {
 public:
     virtual ~Sorter(){}
-    virtual void randomize(void) = 0;
+    virtual void randomize(int scatter) = 0;
     virtual void sort(void)      = 0;
     virtual void setAlgorithm(algorithm_t algorithm) = 0;
 };

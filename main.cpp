@@ -103,10 +103,23 @@ int main(int argc, char* argv[])
 
     printf("\n");
     printf("Using %s as sorting algorithm.\n", algorithmName[algorithm]);
+
+    printf("\n");
+    printf("Scatter settings:\n");
+    printf(" - Scatter pixels (2-2000)\n");
+    printf(" - Random pixels  (0)\n");
+    printf("Select scatter (default %d): ", 0);
+    int scatter;
+    fgets(input, sizeof(input), stdin);
+    sscanf(input, "%d", &scatter);
+    if (scatter < 2 || scatter > 2000)
+    {
+        scatter = 0;
+    }
     printf("\n");
 
     //----------------- Resizing image to manageable size --------------------------
-    #define WIDTH 1600
+    #define WIDTH 1280
     float width = (float)image->getWidth();
     float height = (float)image->getHeight();
     float aspectRatio = width / height;
@@ -120,7 +133,7 @@ int main(int argc, char* argv[])
     pixelSorter->setAlgorithm((algorithm_t)algorithm);
 
     printf("Scambling pixels\n");
-    pixelSorter->randomize();
+    pixelSorter->randomize(scatter);
 
     Thread* thread = new Thread(sort_thread_main, pixelSorter);
     assert(thread);
