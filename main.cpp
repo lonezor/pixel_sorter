@@ -40,13 +40,13 @@
 
 static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
 {
-  "Bubble Sort",
-  "Insertion Sort",
-  "Quicksort",
-  "Selection Sort",
-  "Shaker Sort",
-  "Shell Sort",
-  "Radix Sort",
+    "Bubble Sort",
+    "Insertion Sort",
+    "Quicksort",
+    "Radix Sort",
+    "Selection Sort",
+    "Shaker Sort",
+    "Shell Sort",
 };
 
 static void* sort_thread_main(void* data);
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
     printf("\n");
 
     //----------------- Resizing image to manageable size --------------------------
-    #define WIDTH 1280
+    #define WIDTH 1600
     float width = (float)image->getWidth();
     float height = (float)image->getHeight();
     float aspectRatio = width / height;
