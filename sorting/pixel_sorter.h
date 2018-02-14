@@ -24,6 +24,7 @@
 #include "image.h"
 #include "sorter.h"
 #include "algorithm_collection.h"
+#include "pixel.h"
 
 //-----------------------------------------------------------------------------------------------------------
 
@@ -32,9 +33,14 @@ class PixelSorter : Sorter
 public:
     PixelSorter(Image* image);
     ~PixelSorter();
-   
+
+    // Re-arrangement of pixels
+    void whiteNoise(void);
+    void scatter(int scatter);
+    void sortByPosition(PixelPosition pixelPos);
+
+    // Sort pixels into original image
     void setAlgorithm(algorithm_t algorithm);
-    void randomize(int scatter);
     void sort(void);
 
     Image* getImage(void);

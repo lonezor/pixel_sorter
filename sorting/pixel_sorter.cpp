@@ -65,22 +65,49 @@ void PixelSorter::setAlgorithm(algorithm_t algorithm)
 
 //-----------------------------------------------------------------------------------------------------------
 
-void PixelSorter::randomize(int scatter)
+void PixelSorter::whiteNoise()
 {
     int i,j;
 
-    // Randomize image so that sorting can be performed
-    for(i=1; i < this->nrPixels; i++)
+    // Disorganise pixels completely random
+    for(i=0; i < this->nrPixels; i++)
     {
-        if (scatter && i > scatter)
-        {
-            j = i - scatter + (rand() % scatter);
-        }
-        else
-        {
-            j = rand() % this->nrPixels;
-        }   
+        j = rand() % this->nrPixels;
         this->pixels[i].swap(this->pixels[j]);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------
+
+void PixelSorter::scatter(int scatter)
+{
+    int i,j;
+
+    // Disorganise pixels by scattering pixels close to each other randomly
+    for(i=scatter; i < this->nrPixels && scatter; i++)
+    {
+        j = i - scatter + (rand() % scatter);
+        this->pixels[i].swap(this->pixels[j]);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------
+
+void PixelSorter::sortByPosition(PixelPosition pixelPos)
+{
+    int i;
+
+    // Sort pixels according to light intensity
+    for(i=0; i < nrPixels; i++)
+    {
+        pixels[i].SetPixelPosition(pixelPos);
+    }
+    AlgorithmCollection::pixel_RadixSort.sort(pixels, nrPixels);
+
+    // Reset position type so that sorting will be done on original sequence
+    for(i=0; i < nrPixels; i++)
+    {
+        pixels[i].SetPixelPosition(PIXEL_POSITION_SEQUENCE);
     }
 }
 

@@ -25,6 +25,13 @@
 
 extern void pixelSwapCb(void);
 
+typedef enum
+{
+    PIXEL_POSITION_SEQUENCE,          // Sequence number from first pixel to last
+    PIXEL_POSITION_LIGHT_INTENSITY,   // Sequence number based on light intensity (no differentiation between colors)
+    PIXEL_POSITION_HUE,               // Hue color separation
+} PixelPosition;
+
 //-----------------------------------------------------------------------------------------------------------
 
 class Pixel
@@ -37,17 +44,19 @@ class Pixel
     
         Pixel(void* data, int size)
         {
-            this->data = data;
-            this->size = size;
+            this->data     = data;
+            this->size     = size;
+            this->pixelPos = PIXEL_POSITION_SEQUENCE;
         }
 
         Pixel(void* data, int size, int x, int y, int maxX)
         {
-            this->data = data;
-            this->size = size;
-            this->x = x;
-            this->y = y;
-            this->maxX = maxX;
+            this->data     = data;
+            this->size     = size;
+            this->x        = x;
+            this->y        = y;
+            this->maxX     = maxX;
+            this->pixelPos = PIXEL_POSITION_SEQUENCE;
         }
 
         Pixel copy(void* dst, void* src)
@@ -90,9 +99,96 @@ class Pixel
             *y = this->y;
         }
 
+        void setRgb(uint8_t red, uint8_t green, uint8_t blue)
+        {
+            uint8_t* p = (uint8_t*)data;
+            p[0]       = red;
+            p[1]       = green;
+            p[2]       = blue;
+        }
+
+        void getRgb(uint8_t* red, uint8_t* green, uint8_t* blue)
+        {
+            uint8_t* p = (uint8_t*)data;
+            *red       = p[0];
+            *green     = p[1];
+            *blue      = p[2];
+        }
+
+        void SetPixelPosition(PixelPosition pixelPos)
+        {
+            this->pixelPos = pixelPos;
+        }
+
         int getPos()
         {
-            return this->x + (this->y * this->maxX);
+            switch (pixelPos)
+            {
+                case PIXEL_POSITION_LIGHT_INTENSITY:
+                {
+                    uint8_t red, green, blue;
+                    getRgb(&red, &green, &blue);
+                    return red + green + blue;
+                }
+                case PIXEL_POSITION_HUE:
+                {
+                    uint8_t red, green, blue;
+                    getRgb(&red, &green, &blue);
+
+                    double r = (double)red   / 255;
+                    double g = (double)green / 255;
+                    double b = (double)blue  / 255;
+                    double min = 1.0;
+                    double max = 0.0;
+                    double diff;
+                    double hue = 0;
+
+                    typedef enum
+                    {
+                        RED,
+                        GREEN,
+                        BLUE,
+                    } Color;
+                    Color maxColor = RED;
+
+                    if (r < min) min = r;
+                    if (g < min) min = g;
+                    if (b < min) min = b;
+
+                    if (r > max)
+                    {
+                        max = r;
+                        maxColor = RED;
+                    } 
+                    if (g > max)
+                    {
+                        max = g;
+                        maxColor = GREEN;
+                    }
+                    if (b > max) 
+                    {
+                        max = b;
+                        maxColor = BLUE;
+                    }
+
+                    diff = max - min;
+
+                    if (diff >= -0.0001 && diff <= 0.0001) return 0; // avoid division by zero
+
+                    if      (maxColor == RED)   hue = (g-b) / diff;
+                    else if (maxColor == GREEN) hue = 2.0 + (b-r) / diff;
+                    else if (maxColor == BLUE)  hue = 4.0 + (r-g) / diff;
+
+                    hue *= 60; // to degrees
+                    if (hue < 0) hue += 360;
+
+                    hue *= 100000;
+                    return (int)hue;
+                }
+                case PIXEL_POSITION_SEQUENCE:
+                default:
+                    return this->x + (this->y * this->maxX);
+            }
         }
 
         void swap(Pixel& other)
@@ -155,11 +251,12 @@ class Pixel
         }
 
     private:
-        int   x;
-        int   y;
-        int   maxX;
-        void* data;
-        int   size;
+        int            x;
+        int            y;
+        int            maxX;
+        void*          data;
+        int            size;
+        PixelPosition  pixelPos;
 };
 
 //-----------------------------------------------------------------------------------------------------------

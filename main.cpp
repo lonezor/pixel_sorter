@@ -104,17 +104,25 @@ int main(int argc, char* argv[])
     printf("\n");
     printf("Using %s as sorting algorithm.\n", algorithmName[algorithm]);
 
-    printf("\n");
-    printf("Scatter settings:\n");
-    printf(" - Scatter pixels (2-2000)\n");
-    printf(" - Random pixels  (0)\n");
-    printf("Select scatter (default %d): ", 0);
-    int scatter;
-    fgets(input, sizeof(input), stdin);
-    sscanf(input, "%d", &scatter);
-    if (scatter < 2 || scatter > 2000)
+    enum 
     {
-        scatter = 0;
+        METHOD_WHITE_NOISE,
+        METHOD_LIGHT_INTENSITY,
+        METHOD_HUE,
+    };
+
+    printf("\n");
+    printf("Method for disorganising pixels:\n");
+    printf(" 0. Completely Random\n");
+    printf(" 1. Light Intensity\n");
+    printf(" 2. Hue (default)\n");
+    printf("Select method: ");
+    int method = -1;
+    fgets(input, sizeof(input), stdin);
+    sscanf(input, "%d", &method);
+    if (method < 0 || method > 2)
+    {
+        method = METHOD_HUE;
     }
     printf("\n");
 
@@ -133,7 +141,21 @@ int main(int argc, char* argv[])
     pixelSorter->setAlgorithm((algorithm_t)algorithm);
 
     printf("Scambling pixels\n");
-    pixelSorter->randomize(scatter);
+    switch(method)
+    {
+        case METHOD_WHITE_NOISE:
+            pixelSorter->whiteNoise();
+            break;
+        case METHOD_LIGHT_INTENSITY:
+            pixelSorter->sortByPosition(PIXEL_POSITION_LIGHT_INTENSITY);
+            pixelSorter->scatter(5000);
+            break;
+        case METHOD_HUE:
+            pixelSorter->sortByPosition(PIXEL_POSITION_HUE);
+            pixelSorter->scatter(5000);
+        default:
+            break;
+    }
 
     Thread* thread = new Thread(sort_thread_main, pixelSorter);
     assert(thread);
