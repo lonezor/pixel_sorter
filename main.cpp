@@ -40,17 +40,19 @@
 #endif
 
 #define MAX_STRING (255)
+#define WIDTH 1280
 
 #define DEFAULT_INPUT_FILE        "photo.jpg"
 #define DEFAULT_DIR               "/tmp"
 #define DEFAULT_IMAGE_WIDTH       (1920)
-#define DEFAULT_IMAGE_HEIGHT      (1080)
 #define DEFAULT_FPS               (60)
 #define DEFAULT_FIRST_DELAY       (1)
 #define DEFAULT_SCRAMBLE_DURATION (5)
 #define DEFAULT_SECOND_DELAY      (2)
 #define DEFAULT_SORTING_DURATION  (10)
 #define DEFAULT_THIRD_DELAY       (3)
+
+//-----------------------------------------------------------------------------------------------------------
 
 static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
 {
@@ -70,7 +72,6 @@ enum
     OPTION_HELP_SCREEN,
     OPTION_DIR,
     OPTION_WIDTH,
-    OPTION_HEIGHT,
     OPTION_FPS,
     OPTION_FIRST_DELAY,
     OPTION_SCRAMBLE_DURATION,
@@ -79,12 +80,19 @@ enum
     OPTION_THIRD_DELAY,
 };
 
+enum 
+{
+    METHOD_WHITE_NOISE,
+    METHOD_LIGHT_INTENSITY,
+    METHOD_HUE,
+    METHOD_SCATTER,
+};
+
 static char optDir[MAX_STRING];
 static char optInputFile[MAX_STRING];
 static int  optPngSequence      = 0;
 static int  optHelpScreen       = 0;
 static int  optImageWidth       = DEFAULT_IMAGE_WIDTH;
-static int  optImageHeight      = DEFAULT_IMAGE_HEIGHT;
 static int  optFps              = DEFAULT_FPS;
 static int  optFirstDelay       = DEFAULT_FIRST_DELAY;
 static int  optScrambleDuration = DEFAULT_SCRAMBLE_DURATION;
@@ -98,7 +106,6 @@ static struct option long_options[] =
     { "help",              no_argument,       &optHelpScreen,  OPTION_HELP_SCREEN       },
     { "dir",               required_argument, 0,               OPTION_DIR               },
     { "width",             required_argument, 0,               OPTION_WIDTH             },
-    { "height",            required_argument, 0,               OPTION_HEIGHT            },
     { "fps",               required_argument, 0,               OPTION_FPS               },
     { "first-delay",       required_argument, 0,               OPTION_FIRST_DELAY       },
     { "scramble-duration", required_argument, 0,               OPTION_SCRAMBLE_DURATION },
@@ -107,6 +114,19 @@ static struct option long_options[] =
     { "third-delay",       required_argument, 0,               OPTION_THIRD_DELAY       },
     { 0,                   0,                 0,               0                        },
 };
+
+static long long swapCounter     = 0;
+static long long scrambleCounter = 0;
+static long long sortingCounter  = 0;
+static long long stepSize        = 0;
+static long long imgSeqNr        = 0;
+
+static Image* image = NULL;
+static char outputFilePath[200];
+
+static void* sort_thread_main(void* data);
+
+//-----------------------------------------------------------------------------------------------------------
 
 void printHelp()
 {
@@ -117,8 +137,7 @@ void printHelp()
     printf(" --dir=PATH                   Output directory (default '/tmp'\n");
     printf("\n");
     printf("Image Options:\n");
-    printf(" --width=INTEGER              Image width of output file (default 1920)\n");
-    printf(" --height=INTEGER             Image height of output file (default 1080)\n");
+    printf(" --width=INTEGER              Image width of output file (default 1920). Height given based on aspect ratio.\n");
     printf("\n");
     printf("Time Options:\n");
     printf(" --fps=INTEGER                Frame rate for video generation (default 60)\n");
@@ -131,6 +150,8 @@ void printHelp()
     printf("Misc Options\n");
     printf(" --help                       This help screen.\n");
 }
+
+//-----------------------------------------------------------------------------------------------------------
 
 void parseArguments(int argc, char* argv[])
 {
@@ -156,14 +177,6 @@ void parseArguments(int argc, char* argv[])
                 {
                     printf("Invalid image width %d. Defaulting to %d\n", optImageWidth, DEFAULT_IMAGE_WIDTH);
                     optImageWidth = DEFAULT_IMAGE_WIDTH;
-                }
-                break;
-            case OPTION_HEIGHT:
-                optImageHeight = atoi(optarg);
-                if (optImageHeight < 45 || optImageHeight > 9216)
-                {
-                    printf("Invalid image height %d. Defaulting to %d\n", optImageHeight, DEFAULT_IMAGE_HEIGHT);
-                    optImageHeight = DEFAULT_IMAGE_WIDTH;
                 }
                 break;
             case OPTION_FPS:
@@ -225,16 +238,64 @@ void parseArguments(int argc, char* argv[])
     }
 }
 
-static void* sort_thread_main(void* data);
+//-----------------------------------------------------------------------------------------------------------
+
+void resizeImage(Image* image, int newWidth)
+{
+    float width = (float)image->getWidth();
+    float height = (float)image->getHeight();
+    float aspectRatio = width / height;
+    int newHeight = (int)(((float)newWidth) / aspectRatio);
+    printf("Resizing image to %dx%d\n", newWidth, newHeight);
+    image->rescale(newWidth, newHeight);
+}
+
+//-----------------------------------------------------------------------------------------------------------
+
+void scramblePixels(PixelSorter* pixelSorter, int method, int scatter)
+{
+    printf("Scambling pixels\n");
+    switch(method)
+    {
+        case METHOD_WHITE_NOISE:
+            pixelSorter->whiteNoise();
+            break;
+        case METHOD_LIGHT_INTENSITY:
+            pixelSorter->sortByPosition(PIXEL_POSITION_LIGHT_INTENSITY);
+            pixelSorter->scatter(5000);
+            break;
+        case METHOD_SCATTER:
+            pixelSorter->scatter(scatter);
+            break;
+        case METHOD_HUE:
+        default:
+            pixelSorter->sortByPosition(PIXEL_POSITION_HUE);
+            pixelSorter->scatter(5000);
+            break;
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------
+
+void writeStillImageSequence(int nrFrames)
+{
+    int idx;
+
+    for(idx=0; idx < nrFrames; idx++)
+    {
+        snprintf(outputFilePath, sizeof(outputFilePath), "/tmp/out_%06lld.png", imgSeqNr++);
+        image->saveAsPng(outputFilePath);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------
 
 int main(int argc, char* argv[])
 {
-
 #ifdef UNIT_TEST
     return RunUnitTests();
 #endif
 
-    //----------------- Command argument handling --------------------------
     if (argc == 1)
     {
         printf("Please specify path to an image file!\n");
@@ -251,7 +312,7 @@ int main(int argc, char* argv[])
 
     char*  path = argv[argc-1];
     bool   success;
-    Image* image = new Image();
+    image = new Image();
     assert(image);
 
     success = image->loadFromFile(path);
@@ -287,95 +348,95 @@ int main(int argc, char* argv[])
 
     printf("\n");
     printf("Using %s as sorting algorithm.\n", algorithmName[algorithm]);
-
-    enum 
-    {
-        METHOD_WHITE_NOISE,
-        METHOD_LIGHT_INTENSITY,
-        METHOD_HUE,
-    };
-
     printf("\n");
     printf("Method for disorganising pixels:\n");
     printf(" 0. Completely Random\n");
     printf(" 1. Light Intensity\n");
     printf(" 2. Hue\n");
+    printf(" 3. Scattering (range 3-10000)\n");
     printf("Select method (default 2): ");
+
     int method = -1;
+    int scatter = 0;
     fgets(input, sizeof(input), stdin);
     sscanf(input, "%d", &method);
-    if (method < 0 || method > 2)
+    if (method < 0 || method > 10000)
     {
         method = METHOD_HUE;
+    }
+    else if (method > 2)
+    {
+        scatter = method;
+        method = METHOD_SCATTER;
     }
     printf("\n");
     printf("Using %d as scrambling method.\n", method);
 
-    if (optPngSequence)
-    {
+    // Resizing image to manageable size and setup pixel sorter
+    if (optPngSequence) resizeImage(image, optImageWidth);
+    else                resizeImage(image, WIDTH);
 
-        printf("optDir: %s\n", optDir);
-        printf("optInputFile: %s\n", optInputFile);
-        printf("optImageWidth: %d\n", optImageWidth);
-        printf("optImageHeight: %d\n", optImageHeight);
-        printf("optFps: %d\n", optFps);
-        printf("optFirstDelay: %d\n", optFirstDelay);
-        printf("optScrambleDuration: %d\n", optScrambleDuration);
-        printf("optSecondDelay: %d\n", optSecondDelay);
-        printf("optSortingDuration: %d\n", optSortingDuration);
-        printf("optThirdDelay: %d\n", optThirdDelay);
-
-        return 0; // todo
-    }
-
-    //----------------- Resizing image to manageable size --------------------------
-    #define WIDTH 1280
-    float width = (float)image->getWidth();
-    float height = (float)image->getHeight();
-    float aspectRatio = width / height;
-    int newHeight = (int)(((float)WIDTH) / aspectRatio);
-    printf("Resizing image to %dx%d\n", WIDTH, newHeight);
-    image->rescale(WIDTH, newHeight);
-
-    //----------------- Scramble pixels and start sorting in separate thread --------------------------
     PixelSorter* pixelSorter = new PixelSorter(image);
     assert(pixelSorter);
     pixelSorter->setAlgorithm((algorithm_t)algorithm);
 
-    printf("Scambling pixels\n");
-    switch(method)
+    if (optPngSequence)
     {
-        case METHOD_WHITE_NOISE:
-            pixelSorter->whiteNoise();
-            break;
-        case METHOD_LIGHT_INTENSITY:
-            pixelSorter->sortByPosition(PIXEL_POSITION_LIGHT_INTENSITY);
-            pixelSorter->scatter(5000);
-            break;
-        case METHOD_HUE:
-            pixelSorter->sortByPosition(PIXEL_POSITION_HUE);
-            pixelSorter->scatter(5000);
-        default:
-            break;
+        long long nrFrames;
+        
+        swapCounter     = 0;
+        scrambleCounter = 0;
+        sortingCounter  = 0;
+
+        //*** First pass ***
+        scramblePixels(pixelSorter, method, scatter);
+        scrambleCounter = swapCounter;
+
+        pixelSorter->sort();
+        sortingCounter = swapCounter - scrambleCounter;
+
+        //*** Second pass ***
+        nrFrames = optFirstDelay * optFps;
+        writeStillImageSequence(nrFrames);
+
+        nrFrames    = optScrambleDuration * optFps;
+        stepSize    = scrambleCounter / nrFrames;
+        swapCounter = 0;
+        scramblePixels(pixelSorter, method, scatter);
+
+        nrFrames    = optSecondDelay * optFps;
+        writeStillImageSequence(nrFrames);
+
+        nrFrames    = optSortingDuration * optFps;
+        stepSize    = sortingCounter / nrFrames;
+        swapCounter = 0;
+        pixelSorter->sort();
+
+        nrFrames = optThirdDelay * optFps;
+        writeStillImageSequence(nrFrames);
+    }
+    else // Live window. Sort in separate thread
+    {
+        scramblePixels(pixelSorter, method, scatter);
+
+        
+        Thread* thread = new Thread(sort_thread_main, pixelSorter);
+        assert(thread);
+
+        // Show results in GTK window
+        GtkImageWindow* imageWindow = new GtkImageWindow(image);
+        assert(imageWindow);
+        imageWindow->show();
+
+        // User has closed window, exit program
+        printf("Exiting\n");
+        thread->join();
+        delete imageWindow;
+        delete thread;
     }
 
-    Thread* thread = new Thread(sort_thread_main, pixelSorter);
-    assert(thread);
-
-    //----------------- Show results in GTK window --------------------------
-    GtkImageWindow* imageWindow = new GtkImageWindow(image);
-    assert(imageWindow);
-    imageWindow->show();
-
-    //----------------- User has closed window, exit program --------------------------
-    printf("Exiting\n");
-    thread->join();
-
-    delete imageWindow;
-    delete thread;
     delete pixelSorter;
     delete image;
-    
     return 0;
 }
 
@@ -403,6 +464,15 @@ void pixelSwapCb()
         int ret = 1;
         pthread_exit(&ret);
     }
+
+    // Write current pixel buffer to image file
+    if (image && stepSize && (swapCounter % stepSize == 0))
+    {
+        snprintf(outputFilePath, sizeof(outputFilePath), "/tmp/out_%06lld.png", imgSeqNr++);
+        image->saveAsPng(outputFilePath);
+    }
+
+    swapCounter++;
 }
 
 //-----------------------------------------------------------------------------------------------------------

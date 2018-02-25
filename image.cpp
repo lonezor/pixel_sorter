@@ -152,6 +152,8 @@ void Image::saveAsPng(char* path)
 {
     GError* err = NULL;
 
+    printf("Writing file %s\n", path);
+
     gdk_pixbuf_save(this->pixbuf,
                     path,
                     "png",
