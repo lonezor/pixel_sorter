@@ -138,6 +138,9 @@ void PixelSorter::sort()
         case ALGORITHM_SHELL_SORT:
             AlgorithmCollection::pixel_ShellSort.sort(this->pixels, this->nrPixels);
             break;
+        case ALGORITHM_HEAP_SORT:
+            AlgorithmCollection::pixel_HeapSort.sort(this->pixels, this->nrPixels);
+            break;
 
         // Out-of-place non-comparative sorting algorithms
         case ALGORITHM_RADIX_SORT:

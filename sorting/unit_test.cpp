@@ -19,11 +19,13 @@
 #include "unit_test.h"
 
 #include "algorithm_collection.h"
+#include "integer.h"
 
 #include <assert.h>
 #include <limits.h>
 
 
+// Integer arrays for sorting
 static const int intArray_01[] = {1};
 static const int intArray_02[] = {2,1};
 static const int intArray_03[] = {3,2,1};
@@ -137,6 +139,12 @@ static int UT_integer_test(algorithm_t algorithm, int* pass, int* total)
                 #endif
                 AlgorithmCollection::integer_ShellSort.sort(integers, nrEntries);
                 break;
+            case ALGORITHM_HEAP_SORT:
+                #ifdef VERBOSE
+                printf("Algorithm: Heap Sort\n");
+                #endif
+                AlgorithmCollection::integer_HeapSort.sort(integers, nrEntries);
+                break;
 
              // Out-of-place non-comparative sorting algorithms
             case ALGORITHM_RADIX_SORT:
@@ -183,6 +191,16 @@ static int UT_integer_test(algorithm_t algorithm, int* pass, int* total)
 
     return result;
 }
+
+#if 0
+static int UT_Heap_DataType_Test()
+{
+    int pass, total;
+    int result = UT_heap_test(&pass, &total);
+    printf(" - %-23s %s (%d/%d)\n", "Heap Datatype Test:", result ? "OK" : "FAIL", pass, total);
+    return result;
+}
+#endif
 
 static int UT_Integer_BubbleSort()
 {
@@ -244,6 +262,13 @@ static int UT_Integer_RadixSort()
     return result;
 }
 
+static int UT_Integer_HeapSort()
+{
+    int pass, total;
+    int result = UT_integer_test(ALGORITHM_HEAP_SORT, &pass, &total);
+    printf(" - %-23s %s (%d/%d)\n", "Integer Heap Sort:", result ? "OK" : "FAIL", pass, total);
+    return result;
+}
 
 int RunUnitTests()
 {
@@ -260,6 +285,7 @@ int RunUnitTests()
     res &= UT_Integer_ShakerSort();
     res &= UT_Integer_ShellSort();
     res &= UT_Integer_RadixSort();
+    res &= UT_Integer_HeapSort();
 
     return res == 1 ? 0 : 1;
 }

@@ -24,12 +24,13 @@
 #include "pixel.h"
 
 #include "bubble_sort.h"
+#include "heap_sort.h"
 #include "insertion_sort.h"
 #include "quick_sort.h"
+#include "radix_sort.h"
 #include "selection_sort.h"
 #include "shaker_sort.h"
 #include "shell_sort.h"
-#include "radix_sort.h"
 
 //-----------------------------------------------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ typedef enum
 {
   ALGORITHM_UNKNOWN = -1,
   ALGORITHM_BUBBLE_SORT,
+  ALGORITHM_HEAP_SORT,
   ALGORITHM_INSERTION_SORT,
   ALGORITHM_QUICKSORT,
   ALGORITHM_RADIX_SORT,
@@ -68,6 +70,7 @@ public:
     static ShakerSort<Pixel>        pixel_ShakerSort;
     static ShellSort<Pixel>         pixel_ShellSort;
     static RadixSort<Pixel>         pixel_RadixSort;
+    static HeapSort<Pixel>          pixel_HeapSort;
     static BubbleSort<Integer>      integer_BubbleSort;
     static InsertionSort<Integer>   integer_InsertionSort;
     static QuickSort<Integer>       integer_QuickSort;
@@ -75,6 +78,7 @@ public:
     static ShakerSort<Integer>      integer_ShakerSort;
     static ShellSort<Integer>       integer_ShellSort;
     static RadixSort<Integer>       integer_RadixSort;
+    static HeapSort<Integer>        integer_HeapSort;
     static BubbleSort<Character>    character_BubbleSort;
     static InsertionSort<Character> character_InsertionSort;
     static QuickSort<Character>     character_QuickSort;
@@ -82,6 +86,7 @@ public:
     static ShakerSort<Character>    character_ShakerSort;
     static ShellSort<Character>     character_ShellSort;
     static RadixSort<Character>     character_RadixSort;
+    static HeapSort<Character>      character_HeapSort;
 };
 
 //-----------------------------------------------------------------------------------------------------------

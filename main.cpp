@@ -57,6 +57,7 @@
 static const char* algorithmName[ALGORITHM_NR_ENTRIES] =
 {
     "Bubble Sort",
+    "Heap Sort",
     "Insertion Sort",
     "Quicksort",
     "Radix Sort",
