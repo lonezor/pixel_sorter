@@ -89,10 +89,10 @@ class HeapSort
     {
         int i;
 
-        // Build Heap
+        // Build Max Heap
         for(i=0; i < nrElements; i++) Insert(element, i);
 
-        // Heap Sort
+        // Heap Sort: swap root with last leaf node and heapify, excluding the max value. Repeat.
         while(nrElements)
         {
             nrElements--;
