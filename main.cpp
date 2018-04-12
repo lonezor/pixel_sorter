@@ -284,7 +284,7 @@ void writeStillImageSequence(int nrFrames)
 
     for(idx=0; idx < nrFrames; idx++)
     {
-        snprintf(outputFilePath, sizeof(outputFilePath), "/tmp/out_%06lld.png", imgSeqNr++);
+        snprintf(outputFilePath, sizeof(outputFilePath), "%s/out_%06lld.png", optDir, imgSeqNr++);
         image->saveAsPng(outputFilePath);
     }
 }
@@ -469,7 +469,7 @@ void pixelSwapCb()
     // Write current pixel buffer to image file
     if (image && stepSize && (swapCounter % stepSize == 0))
     {
-        snprintf(outputFilePath, sizeof(outputFilePath), "/tmp/out_%06lld.png", imgSeqNr++);
+        snprintf(outputFilePath, sizeof(outputFilePath), "%s/out_%06lld.png", optDir, imgSeqNr++);
         image->saveAsPng(outputFilePath);
     }
 
