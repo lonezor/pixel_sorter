@@ -19,7 +19,7 @@
 #ifndef _GTK_IMAGE_WINDOW_H_
 #define _GTK_IMAGE_WINDOW_H_
 
-#include "image.h"
+#include "image.hpp"
 
 #include <gtk/gtk.h>
 

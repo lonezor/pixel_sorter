@@ -19,18 +19,18 @@
 #ifndef _ALGORITHM_COLLECTION_H_
 #define _ALGORITHM_COLLECTION_H_
 
-#include "integer.h"
-#include "character.h"
-#include "pixel.h"
+#include "integer.hpp"
+#include "character.hpp"
+#include "pixel.hpp"
 
-#include "bubble_sort.h"
-#include "heap_sort.h"
-#include "insertion_sort.h"
-#include "quick_sort.h"
-#include "radix_sort.h"
-#include "selection_sort.h"
-#include "shaker_sort.h"
-#include "shell_sort.h"
+#include "bubble_sort.hpp"
+#include "heap_sort.hpp"
+#include "insertion_sort.hpp"
+#include "quick_sort.hpp"
+#include "radix_sort.hpp"
+#include "selection_sort.hpp"
+#include "shaker_sort.hpp"
+#include "shell_sort.hpp"
 
 //-----------------------------------------------------------------------------------------------------------
 

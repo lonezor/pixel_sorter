@@ -16,45 +16,21 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _PIXEL_SORTER_H_
-#define _PIXEL_SORTER_H_
+#ifndef _SORTER_H_
+#define _SORTER_H_
 
-#include <stdio.h>
-
-#include "image.h"
-#include "sorter.h"
-#include "algorithm_collection.h"
-#include "pixel.h"
+#include "algorithm_collection.hpp"
 
 //-----------------------------------------------------------------------------------------------------------
 
-class PixelSorter : Sorter
+class Sorter
 {
 public:
-    PixelSorter(Image* image);
-    ~PixelSorter();
-
-    // Re-arrangement of pixels
-    void whiteNoise(void);
-    void scatter(int scatter);
-    void sortByPosition(PixelPosition pixelPos);
-
-    // Sort pixels into original image
-    void setAlgorithm(algorithm_t algorithm);
-    void sort(void);
-
-    Image* getImage(void);
-
-private:
-    int         width;
-    int         height;
-    int         nrPixels;
-    Pixel*      pixels;
-    algorithm_t algorithm;
-    Image*      image;
+    virtual ~Sorter(){}
+    virtual void sort(void)      = 0;
+    virtual void setAlgorithm(algorithm_t algorithm) = 0;
 };
 
 //-----------------------------------------------------------------------------------------------------------
 
-#endif /* _PIXEL_SORTER_H_ */
-
+#endif /* _SORTER_H_ */

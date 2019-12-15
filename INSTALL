@@ -3,3 +3,6 @@ On Debian:
 
 On CentOS:
   yum install gtk3-devel.x86_64
+
+cmake .
+make

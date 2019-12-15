@@ -16,10 +16,11 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "pixel_sorter.h"
 #include <stdio.h>
 #include <assert.h>
 #include <chrono>
+
+#include "pixel_sorter.hpp"
 
 using std::chrono::steady_clock;
 

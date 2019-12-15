@@ -16,9 +16,9 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "gtk_image_window.h"
-#include "image.h"
-#include "thread.h"
+#include "gtk_image_window.hpp"
+#include "image.hpp"
+#include "thread.hpp"
 
 #include <stdio.h>
 #include <assert.h>

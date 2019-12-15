@@ -16,14 +16,12 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "unit_test.h"
-
-#include "algorithm_collection.h"
-#include "integer.h"
-
 #include <assert.h>
 #include <limits.h>
 
+#include "algorithm_collection.hpp"
+#include "integer.hpp"
+#include "unit_test.hpp"
 
 // Integer arrays for sorting
 static const int intArray_01[] = {1};

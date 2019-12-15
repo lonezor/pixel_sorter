@@ -30,10 +30,10 @@
 #include <ctype.h>
 #include <getopt.h>
 
-#include "image.h"
-#include "pixel_sorter.h"
-#include "gtk_image_window.h"
-#include "thread.h"
+#include "image.hpp"
+#include "pixel_sorter.hpp"
+#include "gtk_image_window.hpp"
+#include "thread.hpp"
 
 #ifdef UNIT_TEST
 #include "unit_test.h"
@@ -123,7 +123,7 @@ static long long stepSize        = 0;
 static long long imgSeqNr        = 0;
 
 static Image* image = NULL;
-static char outputFilePath[200];
+static char outputFilePath[2048];
 
 static void* sort_thread_main(void* data);
 
